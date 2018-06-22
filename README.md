@@ -68,10 +68,10 @@ send({
 }): void
 ```
 
-- target: iframe,
-- eventName: string, is used to identify the specific event
-- data: Almost any data type, see [this article](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm) for a complete list
-- targetOrigin: See [this article](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage#Syntax) for more information about this parameter
+- `target`: iframe,
+- `eventName`: string, is used to identify the specific event
+- `data`: Almost any data type, see [this article](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm) for a complete list
+- `targetOrigin`: See [this article](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage#Syntax) for more information about this parameter
 
 ### on
 ```js
@@ -83,8 +83,8 @@ on({
 
 Returns an unsubscribe function, to cancel future events from invoking the callback function.
 
-- eventName: string, is used to identify the specific event
-- callback: function that will be invoked when the specified event is received. receives 2 arguments, the entire `event` and the sent `data` field.
+- `eventName`: string, is used to identify the specific event
+- `callback`: function that will be invoked when the specified event is received. receives 2 arguments, the entire `event` and the sent `data` field.
 
 ### request
 ```js
@@ -97,10 +97,10 @@ request({
 ```
 Very similar to `send` but will return a promise that will resolve with the result of the target's `replyOn` listener.
 
-- target: iframe,
-- eventName: string, is used to identify the specific event
-- data: Almost any data type, see [this article](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm) for a complete list
-- targetOrigin: See [this article](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage#Syntax) for more information about this parameter
+- `target`: iframe,
+- `eventName`: string, is used to identify the specific event
+- `data`: Almost any data type, see [this article](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm) for a complete list
+- `targetOrigin`: See [this article](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage#Syntax) for more information about this parameter
 
 ### replyOn
 ```js
@@ -113,5 +113,5 @@ Very similar to `on` but allows the callback function to return an object to be 
 
 Returns an unsubscribe function, to cancel future events from invoking the callback function.
 
-- eventName: string, is used to identify the specific event
-- callback: (promise) function that will be invoked when the specified event is received. receives 2 arguments, the entire `event` and the sent `data` field. the return value from this function will be sent back to the request iframe.
+- `eventName`: string, is used to identify the specific event
+- `callback`: (promise) function that will be invoked when the specified event is received. receives 2 arguments, the entire `event` and the sent `data` field. the return value from this function will be sent back to the request iframe.
