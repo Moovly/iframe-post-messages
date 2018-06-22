@@ -2,6 +2,8 @@ import { getRandomId, getSourceFrameWindow } from './utils';
 
 const MESSAGE_IDENTIFIER = 'UNIQUE_POSTMESSAGE_IDENTIFIER';
 
+const listeners = new Set();
+
 export function send({
   target, eventName, data, targetOrigin = '*',
 }) {
@@ -17,11 +19,25 @@ function createHandler(eventName, callback) {
   };
 }
 
+function removeListener(l) {
+  window.removeEventListener('message', l, false);
+}
+
+export function unsubscribeAll() {
+  listeners.forEach(removeListener);
+  listeners.clear();
+};
+
 export function on({ eventName, callback }) {
   const handler = createHandler(eventName, callback);
 
   window.addEventListener('message', handler, false);
-  return () => window.removeEventListener('message', handler, false);
+  listeners.add(handler);
+
+  return () => {
+    removeListener(handler);
+    listeners.delete(handler);
+  };
 }
 
 export function request({
