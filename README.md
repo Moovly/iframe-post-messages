@@ -115,3 +115,11 @@ Returns an unsubscribe function, to cancel future events from invoking the callb
 
 - `eventName`: string, is used to identify the specific event
 - `callback`: (promise) function that will be invoked when the specified event is received. receives 2 arguments, the entire `event` and the sent `data` field. the return value from this function will be sent back to the `requestPostMessage` iframe.
+
+### unsubscribeAll
+**Usage**:
+```js
+import { unsubscribeAll } from '@moovly/iframe-post-messages';
+unsubscribeAll()
+```
+Calling this function will remove all current listeners that were set up using `onPostMessage` and  `replyOnPostMessage`.
