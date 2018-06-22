@@ -4,10 +4,19 @@ const MESSAGE_IDENTIFIER = 'UNIQUE_POSTMESSAGE_IDENTIFIER';
 
 const listeners = new Set();
 
-export function send({
+export function sendPostMessage({
   target, eventName, data, targetOrigin = '*',
 }) {
   target.postMessage({ MESSAGE_IDENTIFIER, eventName, data }, targetOrigin);
+}
+
+function removeListener(l) {
+  window.removeEventListener('message', l, false);
+}
+
+export function unsubscribeAll() {
+  listeners.forEach(removeListener);
+  listeners.clear();
 }
 
 function createHandler(eventName, callback) {
@@ -19,16 +28,7 @@ function createHandler(eventName, callback) {
   };
 }
 
-function removeListener(l) {
-  window.removeEventListener('message', l, false);
-}
-
-export function unsubscribeAll() {
-  listeners.forEach(removeListener);
-  listeners.clear();
-};
-
-export function on({ eventName, callback }) {
+export function onPostMessage({ eventName, callback }) {
   const handler = createHandler(eventName, callback);
 
   window.addEventListener('message', handler, false);
@@ -40,14 +40,14 @@ export function on({ eventName, callback }) {
   };
 }
 
-export function request({
+export function requestPostMessage({
   target, eventName, data, targetOrigin = '*',
 }) {
   const requestId = getRandomId();
   const uniqueName = `${eventName}_${requestId}`;
   const requestData = { ...data, requestId };
 
-  send({
+  sendPostMessage({
     target,
     eventName,
     data: requestData,
@@ -55,7 +55,7 @@ export function request({
   });
 
   return new Promise((resolve) => {
-    const unsubscribe = on({
+    const unsubscribe = onPostMessage({
       eventName: uniqueName,
       callback: (event, responseData) => {
         unsubscribe();
@@ -72,10 +72,10 @@ function createReplyOnCallback(callback, name) {
     const { requestId, ...data } = dataRaw;
 
     const result = await callback(event, data);
-    send({ target, eventName: uniqueName, data: result });
+    sendPostMessage({ target, eventName: uniqueName, data: result });
   };
 }
 
-export function replyOn({ eventName, callback }) {
-  return on({ eventName, callback: createReplyOnCallback(callback, eventName) });
+export function replyOnPostMessage({ eventName, callback }) {
+  return onPostMessage({ eventName, callback: createReplyOnCallback(callback, eventName) });
 }
