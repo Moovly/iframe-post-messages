@@ -5,7 +5,9 @@
   "plugins": [
     "transform-object-rest-spread"
   ],
-  "ignore": [
-    "*.test.*",
-  ]
+  "env": {
+    "production": {
+      "ignore": ["*.test.*"]
+    }
+  }
 }
