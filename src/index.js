@@ -3,9 +3,9 @@ import { getRandomId, getSourceFrameWindow } from './utils';
 const MESSAGE_IDENTIFIER = 'UNIQUE_POSTMESSAGE_IDENTIFIER';
 
 export function send({
-  otherWindow, eventName, data, targetOrigin = '*',
+  target, eventName, data, targetOrigin = '*',
 }) {
-  otherWindow.postMessage({ MESSAGE_IDENTIFIER, eventName, data }, targetOrigin);
+  target.postMessage({ MESSAGE_IDENTIFIER, eventName, data }, targetOrigin);
 }
 
 function createHandler(eventName, callback) {
@@ -25,14 +25,14 @@ export function on({ eventName, callback }) {
 }
 
 export function request({
-  otherWindow, eventName, data, targetOrigin = '*',
+  target, eventName, data, targetOrigin = '*',
 }) {
   const requestId = getRandomId();
   const uniqueName = `${eventName}_${requestId}`;
   const requestData = { ...data, requestId };
 
   send({
-    otherWindow,
+    target,
     eventName,
     data: requestData,
     targetOrigin,
@@ -51,12 +51,12 @@ export function request({
 
 function createReplyOnCallback(callback, name) {
   return async function replyOnCallback(event, dataRaw) {
-    const otherWindow = getSourceFrameWindow(event.source);
+    const target = getSourceFrameWindow(event.source);
     const uniqueName = `${name}_${dataRaw.requestId}`;
     const { requestId, ...data } = dataRaw;
 
     const result = await callback(event, data);
-    send({ otherWindow, eventName: uniqueName, data: result });
+    send({ target, eventName: uniqueName, data: result });
   };
 }
 

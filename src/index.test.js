@@ -30,7 +30,7 @@ describe('postMessageUtil', () => {
         },
       });
 
-      postMessageUtil.send({ otherWindow, eventName, data: eventData });
+      postMessageUtil.send({ target: otherWindow, eventName, data: eventData });
     });
 
     afterEach(() => {
@@ -54,28 +54,27 @@ describe('postMessageUtil', () => {
       jest.clearAllMocks();
     });
 
-    it('should return data for normal value', () => {
+    it('should return data for normal value', async () => {
       const eventData = { foo: 'bar' };
       const eventName = 'promise-based-event1';
 
       postMessageUtil.replyOn({ eventName, callback: event => eventData });
 
-      return postMessageUtil.request({ otherWindow: window, eventName }).then((res) => {
-        expect(res).toEqual(eventData);
-      });
+      const res = await postMessageUtil.request({ target: window, eventName });
+      expect(res).toEqual(eventData);
     });
 
-    it('should return data for promise value', () => {
+    it('should return data for promise value', async () => {
       const eventData = { foo: 'bar' };
       const eventName = 'promise-based-event2';
+
       postMessageUtil.replyOn({ eventName, callback: event => Promise.resolve(eventData) });
 
-      return postMessageUtil.request({ otherWindow: window, eventName }).then((res) => {
-        expect(res).toEqual(eventData);
-      });
+      const res = await postMessageUtil.request({ target: window, eventName });
+      expect(res).toEqual(eventData);
     });
 
-    it('should reply for additional calls', () => {
+    it('should reply for additional calls', async () => {
       let counter = 0;
       const eventName = 'promise-based-event3';
 
@@ -87,15 +86,11 @@ describe('postMessageUtil', () => {
         },
       });
 
-      return postMessageUtil
-        .request({ otherWindow: window, eventName })
-        .then((res) => {
-          expect(res).toEqual(1);
-        })
-        .then(() => postMessageUtil.request({ otherWindow: window, eventName }))
-        .then((res) => {
-          expect(res).toEqual(2);
-        });
+      const res1 = await postMessageUtil.request({ target: window, eventName });
+      expect(res1).toEqual(1);
+
+      const res2 = await postMessageUtil.request({ target: window, eventName });
+      expect(res2).toEqual(2);
     });
   });
 });
