@@ -1,9 +1,26 @@
+# iframe-post-messages
+Utility library to simplify postMessage API.\
+Allows for subscribing and easy back and forth messaging between iframes.
+
+## Table of Contents
+- [Install](#install)
+- [Usage](#usage)
+  * [One way usage](#one-way-usage)
+  * [Two way usage](#two-way-usage)
+- [API](#api)
+  * [sendPostMessage](#sendpostmessage)
+  * [onPostMessage](#onpostmessage)
+  * [requestPostMessage](#requestpostmessage)
+  * [replyOnPostMessage](#replyonpostmessage)
+  * [unsubscribeAll](#unsubscribeall)
+
 ## Install
 ```
 $ npm install --save @moovly/iframe-post-messages
 ```
 
-## One way usage
+## Usage
+### One way usage
 Send a message to another frame.
 
 ```js
@@ -25,7 +42,7 @@ onPostMessage({
 });
 
 ```
-## Two way usage
+### Two way usage
 Send a message to another frame and get a response back
 
 ```js
@@ -56,7 +73,7 @@ replyOnPostMessage({
 });
 ```
 
-## API:
+## API
 
 ### sendPostMessage
 ```js
