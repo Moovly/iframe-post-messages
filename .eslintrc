@@ -1,0 +1,12 @@
+{
+  "parser": "babel-eslint",
+  "extends": "@moovly/eslint-config-moovly",
+  "rules": {
+    "indent": ["error", 2],
+    "consistent-return": 0
+  },
+  "env": {
+    "browser": true,
+    "jest": true
+  }
+}
