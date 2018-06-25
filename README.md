@@ -121,9 +121,9 @@ Very similar to `sendPostMessage` but will return a promise that will resolve wi
 
 ### replyOnPostMessage
 ```js
-onPostMessage({
+replyOnPostMessage({
   eventName: string,
-  callback: (event, data) => void,
+  callback: (event, data) => Promise<any> | any,
 }): () => void,
 ```
 Very similar to `onPostMessage` but allows the callback function to return an object to be send back to the other iframe `requestPostMessage` Promise.
