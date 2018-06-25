@@ -67,7 +67,7 @@ export function requestPostMessage({
 
 function createReplyOnCallback(callback, name) {
   return async function replyOnCallback(event, dataRaw) {
-    const target = getSourceFrameWindow(event.source);
+    const target = event.source;
     const uniqueName = `${name}_${dataRaw.requestId}`;
     const { requestId, ...data } = dataRaw;
 
