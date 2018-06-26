@@ -1,12 +1,5 @@
 import { sendPostMessage, onPostMessage, requestPostMessage, replyOnPostMessage, unsubscribeAll } from './index';
 
-const mockWindow = window;
-
-jest.mock('./utils', () => ({
-  getSourceFrameWindow: jest.fn(() => mockWindow),
-  getRandomId: jest.fn(() => 'randomId'),
-}));
-
 describe('one-way postMessage', () => {
   let eventName;
   let eventData;
@@ -94,5 +87,31 @@ describe('two-way postMessaging', () => {
 });
 
 describe('unsubscribeAll', () => {
-  // TODO
+  it('should remove event listeners', async (done) => {
+    let counter = 0;
+    const eventName = 'promise-based-event4';
+
+    replyOnPostMessage({
+      eventName,
+      callback: (event) => {
+        counter += 1;
+        return counter;
+      },
+    });
+
+    const res1 = await requestPostMessage({ target: window, eventName });
+    expect(res1).toEqual(1);
+
+    unsubscribeAll();
+
+    try {
+      await Promise.race([
+        requestPostMessage({ target: window, eventName }),
+        new Promise((_, reject) => setTimeout(reject, 1000)),
+      ]);
+    } catch (err) {
+      expect(counter).toEqual(1); // not called
+      done();
+    }
+  });
 });
