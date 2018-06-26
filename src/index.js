@@ -34,8 +34,8 @@ function createHandler(eventName, callback, onError) {
       return;
     }
 
-    if (event.data.err && typeof onError === 'function') {
-      return onError(event, event.data.err);
+    if (event.data.error !== undefined && typeof onError === 'function') {
+      return onError(event, event.data.error);
     }
 
     callback(event, event.data.data);
