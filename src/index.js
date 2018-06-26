@@ -1,22 +1,29 @@
-import { getRandomId, getSourceFrameWindow } from './utils';
+import { getRandomId } from './utils';
 
 const MESSAGE_IDENTIFIER = 'UNIQUE_POSTMESSAGE_IDENTIFIER';
 
-const listeners = new Set();
+const handlers = new Set();
+
+function addHandler(l) {
+  window.addEventListener('message', l, false);
+  handlers.add(l);
+}
+
+function removeHandler(l) {
+  if (handlers.has(l)) {
+    window.removeEventListener('message', l, false);
+    handlers.delete(l);
+  }
+}
+
+export function unsubscribeAll() {
+  handlers.forEach(removeHandler);
+}
 
 export function sendPostMessage({
   target, eventName, data, targetOrigin = '*',
 }) {
   target.postMessage({ MESSAGE_IDENTIFIER, eventName, data }, targetOrigin);
-}
-
-function removeListener(l) {
-  window.removeEventListener('message', l, false);
-}
-
-export function unsubscribeAll() {
-  listeners.forEach(removeListener);
-  listeners.clear();
 }
 
 function createHandler(eventName, callback) {
@@ -31,13 +38,8 @@ function createHandler(eventName, callback) {
 export function onPostMessage({ eventName, callback }) {
   const handler = createHandler(eventName, callback);
 
-  window.addEventListener('message', handler, false);
-  listeners.add(handler);
-
-  return () => {
-    removeListener(handler);
-    listeners.delete(handler);
-  };
+  addHandler(handler);
+  return () => removeHandler(handler);
 }
 
 export function requestPostMessage({
@@ -67,7 +69,7 @@ export function requestPostMessage({
 
 function createReplyOnCallback(callback, name) {
   return async function replyOnCallback(event, dataRaw) {
-    const target = event.source;
+    const target = event.source || window.parent || window;
     const uniqueName = `${name}_${dataRaw.requestId}`;
     const { requestId, ...data } = dataRaw;
 
