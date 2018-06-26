@@ -3,6 +3,7 @@
   "version": "2.0.2",
   "description": "Utility wrapper around postMessage api",
   "main": "dist/index.js",
+  "types": "src/index.d.ts",
   "scripts": {
     "clean-dist": "rm -rf ./dist",
     "build": "npm run clean-dist && npm run transpile",
@@ -15,6 +16,7 @@
     "access": "public"
   },
   "files": [
+    "src",
     "dist"
   ],
   "repository": {
