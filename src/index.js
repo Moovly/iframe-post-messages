@@ -21,22 +21,29 @@ export function unsubscribeAll() {
 }
 
 export function sendPostMessage({
-  target, eventName, data, targetOrigin = '*',
+  target, eventName, data, targetOrigin = '*', error,
 }) {
-  target.postMessage({ MESSAGE_IDENTIFIER, eventName, data }, targetOrigin);
+  target.postMessage({
+    MESSAGE_IDENTIFIER, eventName, error, data,
+  }, targetOrigin);
 }
 
-function createHandler(eventName, callback) {
+function createHandler(eventName, callback, onError) {
   return function handler(event) {
     if (event.data.MESSAGE_IDENTIFIER !== MESSAGE_IDENTIFIER || event.data.eventName !== eventName) {
       return;
     }
+
+    if (event.data.err && typeof onError === 'function') {
+      return onError(event, event.data.err);
+    }
+
     callback(event, event.data.data);
   };
 }
 
-export function onPostMessage({ eventName, callback }) {
-  const handler = createHandler(eventName, callback);
+export function onPostMessage({ eventName, callback, onError }) {
+  const handler = createHandler(eventName, callback, onError);
 
   addHandler(handler);
   return () => removeHandler(handler);
@@ -56,13 +63,14 @@ export function requestPostMessage({
     targetOrigin,
   });
 
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const unsubscribe = onPostMessage({
       eventName: uniqueName,
       callback: (event, responseData) => {
         unsubscribe();
         resolve(responseData);
       },
+      onError: (event, error) => reject(new Error(error)),
     });
   });
 }
@@ -73,8 +81,12 @@ function createReplyOnCallback(callback, name) {
     const uniqueName = `${name}_${dataRaw.requestId}`;
     const { requestId, ...data } = dataRaw;
 
-    const result = await callback(event, data);
-    sendPostMessage({ target, eventName: uniqueName, data: result });
+    try {
+      const result = await callback(event, data);
+      sendPostMessage({ target, eventName: uniqueName, data: result });
+    } catch (error) {
+      sendPostMessage({ target, eventName: uniqueName, error });
+    }
   };
 }
 
