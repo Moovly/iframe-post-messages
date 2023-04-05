@@ -20,12 +20,16 @@ export function unsubscribeAll() {
   handlers.forEach(removeHandler);
 }
 
-export function sendPostMessage({
-  target, eventName, data, targetOrigin = '*', error,
-}) {
-  target.postMessage({
-    MESSAGE_IDENTIFIER, eventName, error, data,
-  }, targetOrigin);
+export function sendPostMessage({ target, eventName, data, targetOrigin = '*', error }: any) {
+  target.postMessage(
+    {
+      MESSAGE_IDENTIFIER,
+      eventName,
+      error,
+      data,
+    },
+    targetOrigin,
+  );
 }
 
 function createHandler(eventName, callback, onError) {
@@ -42,16 +46,14 @@ function createHandler(eventName, callback, onError) {
   };
 }
 
-export function onPostMessage({ eventName, callback, onError }) {
+export function onPostMessage({ eventName, callback, onError }: any) {
   const handler = createHandler(eventName, callback, onError);
 
   addHandler(handler);
   return () => removeHandler(handler);
 }
 
-export function requestPostMessage({
-  target, eventName, data, targetOrigin = '*',
-}) {
+export function requestPostMessage({ target, eventName, data, targetOrigin = '*' }) {
   const requestId = getRandomId();
   const uniqueName = `${eventName}_${requestId}`;
   const requestData = { ...data, requestId };
@@ -91,5 +93,8 @@ function createReplyOnCallback(callback, name) {
 }
 
 export function replyOnPostMessage({ eventName, callback }) {
-  return onPostMessage({ eventName, callback: createReplyOnCallback(callback, eventName) });
+  return onPostMessage({
+    eventName,
+    callback: createReplyOnCallback(callback, eventName),
+  });
 }
