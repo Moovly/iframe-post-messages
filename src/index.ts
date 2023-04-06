@@ -72,7 +72,7 @@ export function requestPostMessage({ target, eventName, data, targetOrigin = '*'
         unsubscribe();
         resolve(responseData);
       },
-      onError: (event, error) => reject(new Error(error)),
+      onError: (event, error) => reject(error),
     });
   });
 }
