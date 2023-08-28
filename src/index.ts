@@ -57,7 +57,9 @@ export function requestPostMessage({ target, eventName, data, targetOrigin = '*'
   const requestId = getRandomId();
   const uniqueName = `${eventName}_${requestId}`;
   const requestData = { ...data, requestId };
-
+  if (!target) {
+    return;
+  }
   sendPostMessage({
     target,
     eventName,
