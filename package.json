@@ -1,6 +1,6 @@
 {
   "name": "@moovly/iframe-post-messages",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "Utility wrapper around postMessage api",
   "scripts": {
     "clean": "rimraf lib/",
