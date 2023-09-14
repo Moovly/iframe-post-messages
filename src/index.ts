@@ -58,7 +58,7 @@ export function requestPostMessage({ target, eventName, data, targetOrigin = '*'
   const uniqueName = `${eventName}_${requestId}`;
   const requestData = { ...data, requestId };
   if (!target) {
-    return;
+    return new Promise((resolve, reject) => reject({ message: 'No target' }));
   }
   sendPostMessage({
     target,
